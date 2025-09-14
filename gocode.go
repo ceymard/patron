@@ -58,7 +58,10 @@ func GenerateGoCode(tokens []*Token, output io.Writer) int {
 				}
 			}
 
-			output.Write([]byte("\n" + indent + content + "\n"))
+			if !strings.HasPrefix(content, "else") {
+				output.Write([]byte("\n" + indent))
+			}
+			output.Write([]byte(content + "\n"))
 			indent_stack = append(indent_stack, indent)
 			indent = indent + "  "
 
@@ -77,7 +80,17 @@ func GenerateGoCode(tokens []*Token, output io.Writer) int {
 			if indent == "" && output_string {
 				output.Write([]byte(indent + "  return ø.String()\n"))
 			}
-			output.Write([]byte(indent + "}" + "\n"))
+			output.Write([]byte(indent + "}"))
+
+			if i < len(tokens)-1 {
+				next := tokens[i+1]
+				if next != nil && (next.Type != TokenTypeControl || !strings.HasPrefix(string(next.Content), "else")) {
+					output.Write([]byte("\n"))
+				} else {
+					output.Write([]byte(" "))
+				}
+			}
+
 		case TokenTypeString:
 			output.Write([]byte(indent + writer_var + ".Write([]byte(" + content + "))\n"))
 		}
