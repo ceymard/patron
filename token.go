@@ -48,9 +48,9 @@ func (t *Token) isText() bool {
 }
 
 func (t *Token) trimEnd() {
-	pos := len(t.Content) - 1
-	for pos >= 0 {
-		c := t.Content[pos]
+	pos := len(t.Content)
+	for pos > 0 {
+		c := t.Content[pos-1]
 		if unicode.IsSpace(c) && c != '\n' {
 			pos--
 		} else {
@@ -58,8 +58,8 @@ func (t *Token) trimEnd() {
 		}
 	}
 
-	if pos >= 0 && pos < len(t.Content)-1 {
-		t.Content = t.Content[:pos+1]
+	if pos >= 0 && pos < len(t.Content) {
+		t.Content = t.Content[:pos]
 	}
 }
 

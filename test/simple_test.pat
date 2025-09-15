@@ -1,8 +1,4 @@
 @{
-  import (
-    "testing"
-  )
-
   // A regular golang code block.
   type Locals struct {
     Field string
@@ -95,4 +91,13 @@ same-indent
   func TestTagOpener(t *testing.T) {
     expect(t, "check stuff\nmore stuff\n", checkTagOpener())
   }
+}
+
+@{
+  func TestCodeOutput(t *testing.T) {
+    expect(t, "hello world how's it going?\n", checkCodeOutput("world"))
+  }
+}
+@func checkCodeOutput(str string) string {
+  hello @str how's it going?
 }

@@ -315,7 +315,8 @@ func (l *Lexer) CollapseSpaces() int {
 
 		switch tk.Type {
 		case TokenTypeText:
-			prev_is_non_text := prev != nil && prev.Type != TokenTypeText
+
+			prev_is_non_text := prev != nil && prev.Type != TokenTypeText && prev.Type != TokenTypeOutputCode
 			if indent > 0 {
 				tk.applyIndent(indent, prev_is_non_text)
 			}

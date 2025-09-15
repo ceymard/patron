@@ -4,12 +4,9 @@ import (
   "io"
   "fmt"
 	"bytes"
+	"testing"
 )
 
-
-import (
-  "testing"
-)
 
 // A regular golang code block.
 type Locals struct {
@@ -160,6 +157,19 @@ func TestTagOpener(t *testing.T) {
 }
 
 
+func TestCodeOutput(t *testing.T) {
+  expect(t, "hello world how's it going?\n", checkCodeOutput("world"))
+}
+
+
+func checkCodeOutput(str string) string {
+  var ø bytes.Buffer
+  ø.Write([]byte(`hello `))
+  ø.Write([]byte(str))
+  ø.Write([]byte(` how's it going?
+`))
+  return ø.String()
+}
 
 func TestInclude0(t *testing.T) {
   var buf bytes.Buffer

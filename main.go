@@ -41,6 +41,7 @@ func main() {
 		outfile.WriteString(`  "io"
   "fmt"
 	"bytes"
+	"testing"
 )
 
 `)
