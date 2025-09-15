@@ -33,7 +33,11 @@ func GenerateGoCode(tokens []*Token, output io.Writer) int {
 					break
 				}
 				if !tk.Skip {
-					str += string(tk.Content)
+					if tk.FixIndent > 0 {
+						str += string(tk.Content[min(tk.FixIndent, len(tk.Content)):])
+					} else {
+						str += string(tk.Content)
+					}
 				}
 				i++
 			}

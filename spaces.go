@@ -30,6 +30,8 @@ func (l *Lexer) CollapseSpaces() int {
 	var tk *Token = nil
 
 	// indent := 0
+	current_indent := 0
+	indent_stack := make([]int, 0)
 	i := 0
 	// indent_stack := make([]int, 0)
 
@@ -38,9 +40,14 @@ func (l *Lexer) CollapseSpaces() int {
 		tk = l.Tokens[i]
 
 		switch tk.Type {
-		case TokenTypeText:
+		case TokenTypeSpace:
+			if prev != nil && prev.Type == TokenTypeNewline && current_indent > 0 {
+				tk.FixIndent = current_indent
+				// tk.Content = tk.Content[min(current_indent, len(tk.Content)):]
+			}
 
 		case TokenTypeControl:
+			indent_stack = append(indent_stack, current_indent)
 
 			line_started := false
 			if tk.StartsLine() {
@@ -48,27 +55,51 @@ func (l *Lexer) CollapseSpaces() int {
 			}
 
 			newline_eaten := false
+			newline_pos := -1
 			// At the end of a control construct, right after {, eat up spaces a newline if it exists
 
 			for j := i + 1; j < len(l.Tokens) && (l.Tokens[j].Type == TokenTypeSpace || l.Tokens[j].Type == TokenTypeNewline); j++ {
 				l.Tokens[j].Skip = true
 				if l.Tokens[j].Type == TokenTypeNewline {
 					newline_eaten = true
+					newline_pos = j
 					break
 				}
 			}
 
 			if line_started && newline_eaten {
-				// own_indent := 0
+				// Content that follows the control construct will have to be put at the same indentation level this construct is at.
+				own_indent := 0
 				if prev.Type == TokenTypeSpace {
 					prev.Skip = true
-					// own_indent = len(prev.Content)
+					own_indent = len(prev.Content)
 				}
 
+				next_indent := -1
+				for j := newline_pos + 1; j < len(l.Tokens); j++ {
+					t := l.Tokens[j]
+					if t.Type == TokenTypeSpace && l.Tokens[j-1].Type == TokenTypeNewline {
+						if next_indent == -1 {
+							next_indent = len(t.Content)
+						} else {
+							next_indent = min(len(t.Content), next_indent)
+						}
+					} else if t.Type != TokenTypeNewline && t.Type != TokenTypeSpace {
+						break
+					}
+				}
+
+				// pp.Println(current_indent, own_indent, next_indent, current_indent)
+				current_indent = next_indent - max(own_indent-current_indent, 0)
 				//
 			}
 
 		case TokenTypeEnd:
+
+			if len(indent_stack) > 0 {
+				current_indent = indent_stack[len(indent_stack)-1]
+				indent_stack = indent_stack[:len(indent_stack)-1]
+			}
 
 			// Remove spaces before the end token
 			if prev != nil && prev.Type == TokenTypeSpace {
@@ -93,6 +124,7 @@ func (l *Lexer) CollapseSpaces() int {
 					break
 				}
 			}
+
 		}
 
 		i++

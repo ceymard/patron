@@ -42,6 +42,7 @@ type Token struct {
 	EndColumn   int
 	Fmt         string
 	Skip        bool
+	FixIndent   int
 }
 
 func (t *Token) isText() bool {
