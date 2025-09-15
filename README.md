@@ -59,11 +59,11 @@ By default, it is assumed that the displayed values will be of type string. When
 
 Whitespace control is achieved through placement of the tags in the template.
 
-String output with `@()` or `@inline.Variables` or `@"inline strings"` do not touch whitespace around it.
+String output with `@()` or `@inline.Variables` or `@"inline strings"` do not touch whitespace around them.
 
-- Spaces before `}` are removed, up to but not including `\n`
-- Spaces after `{` are removed, up to and including one `\n`
-- If a `\n` is eaten right after a `{`, then indentation measured and applied to subsequent lines.
+- Spaces before `}` are removed, up to but **not** including `\n`, unless the line only contains `}` or spaces.
+- Spaces after `{` are removed, up to and **including** one `\n`. The same will happen if `}` is alone on its line.
+- If a control construct is alone on its line, then its contents will be put at its own indentation level.
 
 In indentation, the *amount* of space characters is the one being considered. Mixing tabs and space for indentation will produce inconsistent results.
 

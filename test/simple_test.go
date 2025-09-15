@@ -17,61 +17,59 @@ type Locals struct {
 /* Single line comment */
 
 func ShowStuff(w io.Writer, locals Locals) {
-  w.Write([]byte(`Display field : `))
+  w.Write([]byte("  Display field : "))
   w.Write([]byte(locals.Field))
-  w.Write([]byte(`
-
-`))
+  w.Write([]byte("\n\n  "))
   /* ShowStuff(w, locals) */
-  w.Write([]byte(`
-`))
+  w.Write([]byte("\n\n  "))
   /*
     Multiline comment.
   */
-  w.Write([]byte(`
-Slice of ints: `))
+  w.Write([]byte("\n\n  Slice of ints: "))
 
   for i, v := range locals.SliceOfInts {
+    w.Write([]byte("    "))
 
     if i > 0 {
+      w.Write([]byte(""))
       w.Write([]byte(", "))
+      w.Write([]byte(""))
     }
+    w.Write([]byte(""))
     w.Write([]byte(fmt.Sprintf("%d", v)))
-    w.Write([]byte(`
-`))
+    w.Write([]byte("\n"))
   }
+  w.Write([]byte(""))
 }
 
 func checkIndent(w io.Writer, ints []int) {
+  w.Write([]byte(""))
 
   if true {
-    w.Write([]byte(`no-space
-
-`))
+    w.Write([]byte("    no-space\n\n"))
   }
-  w.Write([]byte(`same-indent
-  indented
-
-`))
+  w.Write([]byte("  same-indent\n    indented\n\n"))
 
   for _, v := range ints {
+    w.Write([]byte("    "))
     w.Write([]byte(fmt.Sprintf("%d", v)))
-    w.Write([]byte(`
-`))
+    w.Write([]byte("\n"))
   }
-  w.Write([]byte(`
-`))
+  w.Write([]byte("\n  "))
 
   for i, v := range ints {
+    w.Write([]byte(""))
 
     if i > 0 {
+      w.Write([]byte(""))
       w.Write([]byte(", "))
+      w.Write([]byte(""))
     }
+    w.Write([]byte(""))
     w.Write([]byte(fmt.Sprintf("%d", v)))
+    w.Write([]byte(""))
   }
-  w.Write([]byte(`
-
-`))
+  w.Write([]byte("\n\n"))
 }
 
 func TestIndent(t *testing.T) {
@@ -89,16 +87,21 @@ func TestFmt(t *testing.T) {
 
 func checkFmt(flt []float64) string {
   var ø bytes.Buffer
+  ø.Write([]byte("  "))
 
   for i, v := range flt {
+    ø.Write([]byte(""))
 
     if i > 0 {
+      ø.Write([]byte(""))
       ø.Write([]byte(", "))
+      ø.Write([]byte(""))
     }
+    ø.Write([]byte(""))
     ø.Write([]byte(fmt.Sprintf("%.1f", v)))
+    ø.Write([]byte(""))
   }
-  ø.Write([]byte(`
-`))
+  ø.Write([]byte("\n"))
   return ø.String()
 }
 
@@ -110,30 +113,28 @@ func TestInlineTagOpener(t *testing.T) {
 
 func checkInlineTagOpener() string {
   var ø bytes.Buffer
-  ø.Write([]byte(`check `))
+  ø.Write([]byte("  check "))
 
   if true {
-    ø.Write([]byte(`stuff`))
+    ø.Write([]byte("stuff"))
   }
-  ø.Write([]byte(`
-`))
+  ø.Write([]byte("\n"))
   return ø.String()
 }
 
 func checkTagOpener() string {
   var ø bytes.Buffer
-  ø.Write([]byte(`check `))
+  ø.Write([]byte("  check "))
 
   if true {
-    ø.Write([]byte(`stuff`))
+    ø.Write([]byte("stuff"))
   }
-  ø.Write([]byte(`
-`))
+  ø.Write([]byte("\n"))
 
   if true {
-    ø.Write([]byte(`more stuff
-`))
+    ø.Write([]byte("    more stuff\n"))
   }
+  ø.Write([]byte(""))
   return ø.String()
 }
 
@@ -149,10 +150,9 @@ func TestCodeOutput(t *testing.T) {
 
 func checkCodeOutput(str string) string {
   var ø bytes.Buffer
-  ø.Write([]byte(`hello `))
+  ø.Write([]byte("  hello "))
   ø.Write([]byte(str))
-  ø.Write([]byte(` how's it going?
-`))
+  ø.Write([]byte(" how's it going?\n"))
   return ø.String()
 }
 
@@ -163,15 +163,12 @@ func TestIndent2(t *testing.T) {
 
 func checkIndent2() string {
   var ø bytes.Buffer
+  ø.Write([]byte(""))
 
   if true {
-    ø.Write([]byte(`in
-  dent
-`))
+    ø.Write([]byte("    in\n      dent\n"))
   }
-  ø.Write([]byte(`in
-  dent
-`))
+  ø.Write([]byte("  in\n    dent\n"))
   return ø.String()
 }
 
@@ -182,29 +179,27 @@ func TestIndent3(t *testing.T) {
 
 func checkIndent3() string {
   var ø bytes.Buffer
+  ø.Write([]byte(""))
 
   if true {
-    ø.Write([]byte(`in
-  dent
-`))
+    ø.Write([]byte("    in\n      dent\n"))
   }
-  ø.Write([]byte(`in
-`))
+  ø.Write([]byte("  in\n"))
 
   if true {
+    ø.Write([]byte("      "))
 
     if true {
-      ø.Write([]byte(`d`))
+      ø.Write([]byte("d"))
     }
-    ø.Write([]byte(`ent
-`))
+    ø.Write([]byte("ent\n      "))
 
     if true {
-      ø.Write([]byte(`d`))
+      ø.Write([]byte("d"))
     }
-    ø.Write([]byte(`ent
-`))
+    ø.Write([]byte("ent\n"))
   }
+  ø.Write([]byte(""))
   return ø.String()
 }
 

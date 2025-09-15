@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"io"
-	"slices"
 	"unicode"
 )
 
@@ -28,9 +27,7 @@ func NewLexer(input io.Reader) *Lexer {
 
 	l.Lex(false)
 
-	// l.CollapseText()
 	l.CollapseSpaces()
-	l.CollapseText()
 
 	return l
 }
@@ -39,7 +36,16 @@ func (l *Lexer) Lex(waiting_for_bracket bool) {
 	for l.Pos < len(l.Input) {
 		c := l.Input[l.Pos]
 
-		if c == '@' && l.Pos+1 < len(l.Input) {
+		if c == '\n' {
+			l.NewToken(TokenTypeNewline, l.Pos, l.Pos+1)
+		} else if unicode.IsSpace(c) {
+			start := l.Pos
+			l.Pos++
+			for l.Pos < len(l.Input) && unicode.IsSpace(l.Input[l.Pos]) {
+				l.Pos++
+			}
+			l.NewToken(TokenTypeSpace, start, l.Pos)
+		} else if c == '@' && l.Pos+1 < len(l.Input) {
 			l.lexAt()
 		} else if waiting_for_bracket && c == '}' {
 			l.NewToken(TokenTypeEnd, l.Pos, l.Pos+1)
@@ -59,7 +65,7 @@ func (l *Lexer) lexText(waiting_for_bracket bool) {
 
 	for pos < len(l.Input) {
 
-		if l.Input[pos] == '@' || waiting_for_bracket && l.Input[pos] == '}' {
+		if unicode.IsSpace(l.Input[pos]) || l.Input[pos] == '@' || waiting_for_bracket && l.Input[pos] == '}' {
 			break
 		}
 
@@ -264,137 +270,19 @@ func (l *Lexer) NewToken(t TokenType, start int, end int) *Token {
 	endColumn := l.Column
 
 	tk := &Token{
+		Lexer:       l,
 		Type:        t,
 		Content:     l.Input[start:end],
 		Pos:         start,
+		PosInSlice:  len(l.Tokens),
 		StartLine:   startLine,
 		StartColumn: startColumn,
 		EndLine:     endLine,
 		EndColumn:   endColumn,
 	}
+
 	l.Tokens = append(l.Tokens, tk)
 	l.Pos = end
 
 	return tk
-}
-
-func (l *Lexer) CollapseText() {
-
-	i := 0
-	for i < len(l.Tokens)-1 {
-		tk := l.Tokens[i]
-		next := l.Tokens[i+1]
-		if tk.isText() && len(tk.Content) == 0 {
-			l.Tokens = slices.Delete(l.Tokens, i, i+1)
-		} else if tk.isText() && next.isText() {
-			tk.Content = slices.Concat(tk.Content, next.Content)
-			l.Tokens = slices.Delete(l.Tokens, i+1, i+2)
-		} else {
-			i++
-		}
-	}
-
-}
-
-/* HandleSpace removes space according to spacing rules */
-func (l *Lexer) CollapseSpaces() int {
-	var prev *Token = nil
-	var next *Token = nil
-	indent := 0
-	i := 0
-	indent_stack := make([]int, 0)
-
-	for i < len(l.Tokens) {
-		tk := l.Tokens[i]
-
-		if i < len(l.Tokens)-1 {
-			next = l.Tokens[i+1]
-		} else {
-			next = nil
-		}
-
-		switch tk.Type {
-		case TokenTypeText:
-
-			prev_is_non_text := prev != nil && prev.Type != TokenTypeText && prev.Type != TokenTypeOutputCode
-			if indent > 0 {
-				tk.applyIndent(indent, prev_is_non_text)
-			}
-
-		case TokenTypeControl, TokenTypeCode:
-
-			was_own_line_start := false
-			was_own_line_end := false
-
-			if prev != nil && prev.Type == TokenTypeText {
-				pos := tk.Pos - 2
-				for pos >= 0 {
-					c := l.Input[pos]
-					if c == '\n' {
-						was_own_line_start = true
-						break
-					}
-					if !unicode.IsSpace(c) {
-						break
-					}
-					pos--
-				}
-			}
-
-			if next != nil && next.Type == TokenTypeText {
-				// When on a control tag, we need to measure the indent of the previous text token
-				// to remove the indente from subsequent text nodes.
-				new_indent := next.measureIndent()
-
-				indent_stack = append(indent_stack, indent)
-				if new_indent > -1 {
-					was_own_line_end = true
-					indent = new_indent
-				}
-
-				// The control tag starts the line. It will thus remove all the indent from the subsequent text nodes.
-				next.trimLeadingEmptyLines()
-			}
-
-			if was_own_line_start && was_own_line_end {
-				prev.trimEnd()
-			}
-
-			//
-
-		case TokenTypeEnd:
-
-			was_own_line := true
-			pos := tk.Pos - 1
-			for pos >= 0 {
-				c := l.Input[pos]
-				if c == '\n' {
-					break
-				} else if !unicode.IsSpace(c) {
-					was_own_line = false
-					break
-				}
-				pos--
-			}
-
-			if prev != nil && prev.Type == TokenTypeText {
-				prev.trimEnd() // remove trailing space before }, but stop at new line
-			}
-
-			if was_own_line && len(indent_stack) > 0 {
-				l := len(indent_stack) - 1
-				indent = indent_stack[l]
-				indent_stack = indent_stack[:l]
-			}
-
-			if was_own_line && next != nil && next.Type == TokenTypeText {
-				next.trimLeadingEmptyLines()
-			}
-		}
-
-		prev = tk
-		i++
-	}
-
-	return i
 }

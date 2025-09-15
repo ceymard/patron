@@ -25,12 +25,26 @@ func GenerateGoCode(tokens []*Token, output io.Writer) int {
 		content := string(token.Content)
 
 		switch token.Type {
-		case TokenTypeText:
-			if indent == "" {
+		case TokenTypeText, TokenTypeSpace, TokenTypeNewline:
+			str := ""
+			for i < len(tokens) {
+				tk := tokens[i]
+				if !tk.isText() {
+					break
+				}
+				if !tk.Skip {
+					str += string(tk.Content)
+				}
 				i++
-				continue
 			}
-			output.Write([]byte(indent + writer_var + ".Write([]byte(`" + content + "`))\n"))
+
+			if balance >= 0 {
+				str = strings.ReplaceAll(str, "\\", "\\\\")
+				str = strings.ReplaceAll(str, "\"", "\\\"")
+				str = strings.ReplaceAll(str, "\n", "\\n")
+				output.Write([]byte(indent + writer_var + ".Write([]byte(\"" + str + "\"))\n"))
+			}
+			continue
 		case TokenTypeCode:
 			output.Write([]byte(indent + content + "\n"))
 		case TokenTypeOutputCode:
@@ -70,6 +84,7 @@ func GenerateGoCode(tokens []*Token, output io.Writer) int {
 			}
 
 		case TokenTypeEnd:
+			balance--
 			if len(indent_stack) > 0 {
 				indent = indent_stack[len(indent_stack)-1]
 				indent_stack = indent_stack[:len(indent_stack)-1]
