@@ -42,7 +42,7 @@ func GenerateGoCode(tokens []*Token, output io.Writer) int {
 				i++
 			}
 
-			if balance >= 0 {
+			if balance >= 0 && str != "" {
 				str = strings.ReplaceAll(str, "\\", "\\\\")
 				str = strings.ReplaceAll(str, "\"", "\\\"")
 				str = strings.ReplaceAll(str, "\n", "\\n")
@@ -103,7 +103,16 @@ func GenerateGoCode(tokens []*Token, output io.Writer) int {
 
 			if i < len(tokens)-1 {
 				next := tokens[i+1]
-				if next != nil && (next.Type != TokenTypeControl || !strings.HasPrefix(string(next.Content), "else")) {
+
+				next_is_else := false
+				if i+2 < len(tokens) {
+					next_next := tokens[i+2]
+					if next_next.Type == TokenTypeControl && strings.HasPrefix(string(next_next.Content), "else") {
+						next_is_else = true
+					}
+				}
+
+				if next != nil && (!next_is_else) {
 					output.Write([]byte("\n"))
 				} else {
 					output.Write([]byte(" "))
