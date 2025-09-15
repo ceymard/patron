@@ -50,8 +50,7 @@ func checkIndent(w io.Writer, ints []int) {
 `))
   }
   w.Write([]byte(`same-indent
-indented
-
+  indented
 
 `))
 
@@ -61,7 +60,6 @@ indented
 `))
   }
   w.Write([]byte(`
-
 `))
 
   for i, v := range ints {
@@ -79,20 +77,7 @@ indented
 func TestIndent(t *testing.T) {
   var buf bytes.Buffer
   checkIndent(&buf, []int{1, 2, 3})
-  expect(t, `no-space
-
-same-indent
-indented
-
-
-1
-2
-3
-
-
-1, 2, 3
-
-`, buf.String())
+  expect(t, "no-space\n\nsame-indent\n  indented\n\n1\n2\n3\n\n1, 2, 3\n\n", buf.String())
 }
 
 
@@ -167,6 +152,25 @@ func checkCodeOutput(str string) string {
   ø.Write([]byte(`hello `))
   ø.Write([]byte(str))
   ø.Write([]byte(` how's it going?
+`))
+  return ø.String()
+}
+
+func TestIndent2(t *testing.T) {
+  expect(t, "in\n  dent\nin\n  dent\n", checkIndent2())
+}
+
+
+func checkIndent2() string {
+  var ø bytes.Buffer
+
+  if true {
+    ø.Write([]byte(`in
+  dent
+`))
+  }
+  ø.Write([]byte(`in
+  dent
 `))
   return ø.String()
 }

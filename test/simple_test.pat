@@ -29,11 +29,9 @@
   same-indent
     indented
 
-
   @for _, v := range ints {
     @v%d
   }
-
 
   @for i, v := range ints { @if i > 0 { @", " } @v%d }
 
@@ -43,20 +41,7 @@
   func TestIndent(t *testing.T) {
     var buf bytes.Buffer
     checkIndent(&buf, []int{1, 2, 3})
-    expect(t, `no-space
-
-same-indent
-  indented
-
-
-1
-2
-3
-
-
-1, 2, 3
-
-`, buf.String())
+    expect(t, "no-space\n\nsame-indent\n  indented\n\n1\n2\n3\n\n1, 2, 3\n\n", buf.String())
   }
 
 }
@@ -100,4 +85,18 @@ same-indent
 }
 @func checkCodeOutput(str string) string {
   hello @str how's it going?
+}
+
+@{
+  func TestIndent2(t *testing.T) {
+    expect(t, "in\n  dent\nin\n  dent\n", checkIndent2())
+  }
+}
+@func checkIndent2() string {
+  @if true {
+    in
+      dent
+  }
+  in
+    dent
 }

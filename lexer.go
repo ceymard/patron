@@ -329,11 +329,9 @@ func (l *Lexer) CollapseSpaces() int {
 				new_indent := next.measureIndent()
 
 				// The control tag starts the line. It will thus remove all the indent from the subsequent text nodes.
+				indent_stack = append(indent_stack, indent)
 				if new_indent > -1 {
-					indent_stack = append(indent_stack, new_indent)
 					indent = new_indent
-				} else {
-					indent_stack = append(indent_stack, indent)
 				}
 
 				next.trimLeadingEmptyLines()
@@ -361,7 +359,7 @@ func (l *Lexer) CollapseSpaces() int {
 				prev.trimEnd() // remove trailing space before }, but stop at new line
 			}
 
-			if len(indent_stack) > 0 {
+			if was_own_line && len(indent_stack) > 0 {
 				l := len(indent_stack) - 1
 				indent = indent_stack[l]
 				indent_stack = indent_stack[:l]
