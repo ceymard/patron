@@ -323,19 +323,41 @@ func (l *Lexer) CollapseSpaces() int {
 
 		case TokenTypeControl, TokenTypeCode:
 
+			was_own_line_start := false
+			was_own_line_end := false
+
+			if prev != nil && prev.Type == TokenTypeText {
+				pos := tk.Pos - 2
+				for pos >= 0 {
+					c := l.Input[pos]
+					if c == '\n' {
+						was_own_line_start = true
+						break
+					}
+					if !unicode.IsSpace(c) {
+						break
+					}
+					pos--
+				}
+			}
+
 			if next != nil && next.Type == TokenTypeText {
 				// When on a control tag, we need to measure the indent of the previous text token
-				// to remove the indent from subsequent text nodes.
+				// to remove the indente from subsequent text nodes.
 				new_indent := next.measureIndent()
 
-				// The control tag starts the line. It will thus remove all the indent from the subsequent text nodes.
 				indent_stack = append(indent_stack, indent)
 				if new_indent > -1 {
+					was_own_line_end = true
 					indent = new_indent
 				}
 
+				// The control tag starts the line. It will thus remove all the indent from the subsequent text nodes.
 				next.trimLeadingEmptyLines()
-				//
+			}
+
+			if was_own_line_start && was_own_line_end {
+				prev.trimEnd()
 			}
 
 			//

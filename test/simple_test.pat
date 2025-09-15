@@ -100,3 +100,20 @@
   in
     dent
 }
+
+@{
+func TestIndent3(t *testing.T) {
+    expect(t, "in\n  dent\nin\n  dent\n  dent\n", checkIndent3())
+  }
+}
+@func checkIndent3() string {
+  @if true {
+    in
+      dent
+  }
+  in
+    @if true {
+      @if true { d } ent
+      @if true { d } ent
+    }
+}

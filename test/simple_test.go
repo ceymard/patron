@@ -175,6 +175,40 @@ func checkIndent2() string {
   return ø.String()
 }
 
+func TestIndent3(t *testing.T) {
+    expect(t, "in\n  dent\nin\n  dent\n  dent\n", checkIndent3())
+  }
+
+
+func checkIndent3() string {
+  var ø bytes.Buffer
+
+  if true {
+    ø.Write([]byte(`in
+  dent
+`))
+  }
+  ø.Write([]byte(`in
+`))
+
+  if true {
+
+    if true {
+      ø.Write([]byte(`d`))
+    }
+    ø.Write([]byte(`ent
+`))
+
+    if true {
+      ø.Write([]byte(`d`))
+    }
+    ø.Write([]byte(`ent
+`))
+  }
+  return ø.String()
+}
+
+
 func TestInclude0(t *testing.T) {
   var buf bytes.Buffer
   var st fmt.Stringer = &buf
