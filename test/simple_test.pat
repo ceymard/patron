@@ -114,6 +114,7 @@ func TestIndent3(t *testing.T) {
   in
     @if true {
       @if true { d } ent
-      @if true { d } ent
+      @if false { dent }
+      @else { dent }
     }
 }

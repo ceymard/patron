@@ -21,29 +21,24 @@ func ShowStuff(w io.Writer, locals Locals) {
   w.Write([]byte(locals.Field))
   w.Write([]byte("\n\n"))
   /* ShowStuff(w, locals) */
-  w.Write([]byte("\n\n"))
+  w.Write([]byte("\n"))
   /*
     Multiline comment.
   */
-  w.Write([]byte("\n\nSlice of ints: "))
+  w.Write([]byte("\n  Slice of ints: "))
 
   for i, v := range locals.SliceOfInts {
-    w.Write([]byte("  "))
+    w.Write([]byte("    "))
 
     if i > 0 {
-      w.Write([]byte(""))
       w.Write([]byte(", "))
-      w.Write([]byte(""))
     }
-    w.Write([]byte(""))
     w.Write([]byte(fmt.Sprintf("%d", v)))
     w.Write([]byte("\n"))
   }
-  w.Write([]byte(""))
 }
 
 func checkIndent(w io.Writer, ints []int) {
-  w.Write([]byte(""))
 
   if true {
     w.Write([]byte("no-space\n\n"))
@@ -51,23 +46,17 @@ func checkIndent(w io.Writer, ints []int) {
   w.Write([]byte("same-indent\n  indented\n\n"))
 
   for _, v := range ints {
-    w.Write([]byte(""))
     w.Write([]byte(fmt.Sprintf("%d", v)))
     w.Write([]byte("\n"))
   }
   w.Write([]byte("\n"))
 
   for i, v := range ints {
-    w.Write([]byte(""))
 
     if i > 0 {
-      w.Write([]byte(""))
       w.Write([]byte(", "))
-      w.Write([]byte(""))
     }
-    w.Write([]byte(""))
     w.Write([]byte(fmt.Sprintf("%d", v)))
-    w.Write([]byte(""))
   }
   w.Write([]byte("\n\n"))
 }
@@ -87,19 +76,13 @@ func TestFmt(t *testing.T) {
 
 func checkFmt(flt []float64) string {
   var ø bytes.Buffer
-  ø.Write([]byte(""))
 
   for i, v := range flt {
-    ø.Write([]byte(""))
 
     if i > 0 {
-      ø.Write([]byte(""))
       ø.Write([]byte(", "))
-      ø.Write([]byte(""))
     }
-    ø.Write([]byte(""))
     ø.Write([]byte(fmt.Sprintf("%.1f", v)))
-    ø.Write([]byte(""))
   }
   ø.Write([]byte("\n"))
   return ø.String()
@@ -134,7 +117,6 @@ func checkTagOpener() string {
   if true {
     ø.Write([]byte("more stuff\n"))
   }
-  ø.Write([]byte(""))
   return ø.String()
 }
 
@@ -163,7 +145,6 @@ func TestIndent2(t *testing.T) {
 
 func checkIndent2() string {
   var ø bytes.Buffer
-  ø.Write([]byte(""))
 
   if true {
     ø.Write([]byte("in\n  dent\n"))
@@ -179,7 +160,6 @@ func TestIndent3(t *testing.T) {
 
 func checkIndent3() string {
   var ø bytes.Buffer
-  ø.Write([]byte(""))
 
   if true {
     ø.Write([]byte("in\n  dent\n"))
@@ -194,12 +174,13 @@ func checkIndent3() string {
     }
     ø.Write([]byte("ent\n  "))
 
-    if true {
-      ø.Write([]byte("d"))
+    if false {
+      ø.Write([]byte("dent"))
+    } else {
+      ø.Write([]byte("dent"))
     }
-    ø.Write([]byte("ent\n"))
+    ø.Write([]byte("\n"))
   }
-  ø.Write([]byte(""))
   return ø.String()
 }
 

@@ -104,18 +104,23 @@ func GenerateGoCode(tokens []*Token, output io.Writer) int {
 			if i < len(tokens)-1 {
 				next := tokens[i+1]
 
-				next_is_else := false
-				if i+2 < len(tokens) {
-					next_next := tokens[i+2]
-					if next_next.Type == TokenTypeControl && strings.HasPrefix(string(next_next.Content), "else") {
-						next_is_else = true
+				else_position := -1
+				for j := i + 1; j < len(tokens); j++ {
+					tk := tokens[j]
+					if tk.Type == TokenTypeControl && strings.HasPrefix(string(tk.Content), "else") {
+						else_position = j
+						break
+					} else if tk.Type != TokenTypeSpace && tk.Type != TokenTypeNewline {
+						break
 					}
 				}
 
-				if next != nil && (!next_is_else) {
+				if next != nil && else_position == -1 {
 					output.Write([]byte("\n"))
 				} else {
 					output.Write([]byte(" "))
+					i = else_position
+					continue
 				}
 			}
 
