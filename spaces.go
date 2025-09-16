@@ -94,7 +94,7 @@ func (l *Lexer) CollapseSpaces() int {
 				//
 			}
 
-		case TokenTypeEnd:
+		case TokenTypeEnd, TokenTypeCode:
 
 			if len(indent_stack) > 0 {
 				current_indent = indent_stack[len(indent_stack)-1]

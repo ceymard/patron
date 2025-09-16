@@ -107,7 +107,7 @@ func (l *Lexer) lexAt() {
 		pos++
 
 		for pos < len(l.Input) {
-			if !unicode.IsLetter(l.Input[pos]) && !unicode.IsDigit(l.Input[pos]) {
+			if !unicode.IsLetter(l.Input[pos]) && !unicode.IsDigit(l.Input[pos]) && l.Input[pos] != '_' {
 				break
 			}
 			pos++
@@ -131,7 +131,9 @@ func (l *Lexer) lexAt() {
 				if c == '.' {
 					pos++
 					// Advance on an identifier
-					for pos < len(l.Input) && (unicode.IsLetter(l.Input[pos]) || unicode.IsDigit(l.Input[pos])) {
+					for pos < len(l.Input) && (unicode.IsLetter(l.Input[pos]) ||
+						unicode.IsDigit(l.Input[pos]) ||
+						l.Input[pos] == '_') {
 						pos++
 					}
 				} else if c == '(' {
