@@ -25,10 +25,10 @@ func ShowStuff(w io.Writer, locals Locals) {
   /*
     Multiline comment.
   */
-  w.Write([]byte("\n  Slice of ints: "))
+  w.Write([]byte("\nSlice of ints: "))
 
   for i, v := range locals.SliceOfInts {
-    w.Write([]byte("    "))
+    w.Write([]byte("  "))
 
     if i > 0 {
       w.Write([]byte(", "))
@@ -177,9 +177,8 @@ func checkIndent3() string {
     if false {
       ø.Write([]byte("dent"))
     } else {
-      ø.Write([]byte("dent"))
+      ø.Write([]byte("  dent\n"))
     }
-    ø.Write([]byte("\n"))
   }
   return ø.String()
 }

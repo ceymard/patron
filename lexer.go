@@ -131,10 +131,16 @@ func (l *Lexer) lexAt() {
 				if c == '.' {
 					pos++
 					// Advance on an identifier
+					found := false
 					for pos < len(l.Input) && (unicode.IsLetter(l.Input[pos]) ||
 						unicode.IsDigit(l.Input[pos]) ||
 						l.Input[pos] == '_') {
+						found = true
 						pos++
+					}
+					if !found {
+						pos--
+						break
 					}
 				} else if c == '(' {
 					pos = l.advanceGoCodeUntil(pos, ')')

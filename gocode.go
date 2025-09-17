@@ -78,6 +78,8 @@ func GenerateGoCode(tokens []*Token, output io.Writer) int {
 
 			if !strings.HasPrefix(content, "else") {
 				output.Write([]byte("\n" + indent))
+			} else {
+				content = strings.Replace(content, "elseif", "else if", 1)
 			}
 			output.Write([]byte(content + "\n"))
 			indent_stack = append(indent_stack, indent)
