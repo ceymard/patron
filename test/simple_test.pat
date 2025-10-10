@@ -16,6 +16,7 @@
     Multiline comment.
   */}
 
+  @locals.Field%s
   Slice of ints: @for i, v := range locals.SliceOfInts {
     @if i > 0 { @", " } @v%d
   }

@@ -152,7 +152,6 @@ func (l *Lexer) lexAt() {
 			}
 			tk := l.NewToken(TokenTypeOutputCode, start, pos)
 			l.parseFmtSpecifier(tk)
-			// inline expression
 		}
 	} else if c == '"' || c == '\'' || c == '`' {
 		pos++
@@ -227,8 +226,8 @@ func (l *Lexer) advanceGoCodeUntil(pos int, until rune) int {
 }
 
 func (l *Lexer) parseFmtSpecifier(tk *Token) {
-	start := tk.Pos + 1
-	pos := tk.Pos + 1
+	start := l.Pos
+	pos := l.Pos
 	if pos >= len(l.Input) || l.Input[pos] != '%' {
 		return
 	}

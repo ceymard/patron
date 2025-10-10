@@ -7,5 +7,5 @@ all:
 test: all
 	cd test && go test
 
-install:
+install: all
 	cp patron ~/opt/bin
