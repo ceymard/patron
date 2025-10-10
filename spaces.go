@@ -49,10 +49,10 @@ func (l *Lexer) CollapseSpaces() int {
 		case TokenTypeControl:
 			indent_stack = append(indent_stack, current_indent)
 
-			line_started := false
-			if tk.StartsLine() {
-				line_started = true
-			}
+			// line_started := false
+			// if tk.StartsLine() {
+			// 	line_started = true
+			// }
 
 			newline_eaten := false
 			newline_pos := -1
@@ -67,12 +67,22 @@ func (l *Lexer) CollapseSpaces() int {
 				}
 			}
 
-			if line_started && newline_eaten {
-				// Content that follows the control construct will have to be put at the same indentation level this construct is at.
+			if newline_eaten {
+				// Content that follows the control construct will have to be put at the same indentation level the beginning of the line is
 				own_indent := 0
+
+				for j := i - 1; j >= 0; j-- {
+					t := l.Tokens[j]
+					if t.Type == TokenTypeSpace {
+						// We will keep the last space
+						own_indent = len(t.Content)
+					} else if t.Type == TokenTypeNewline {
+						break
+					}
+				}
+
 				if prev.Type == TokenTypeSpace {
 					prev.Skip = true
-					own_indent = len(prev.Content)
 				}
 
 				next_indent := -1

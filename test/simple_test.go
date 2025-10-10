@@ -25,10 +25,9 @@ func ShowStuff(w io.Writer, locals Locals) {
   /*
     Multiline comment.
   */
-  w.Write([]byte("\nSlice of ints: "))
+  w.Write([]byte("\nSlice of ints:"))
 
   for i, v := range locals.SliceOfInts {
-    w.Write([]byte("  "))
 
     if i > 0 {
       w.Write([]byte(", "))

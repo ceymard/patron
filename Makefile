@@ -6,3 +6,6 @@ all:
 
 test: all
 	cd test && go test
+
+install:
+	cp patron ~/opt/bin
