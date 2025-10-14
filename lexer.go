@@ -81,7 +81,10 @@ func (l *Lexer) lexAt() {
 
 	c := l.Input[pos]
 
-	if c == '(' || c == '{' {
+	if c == '@' {
+		l.NewToken(TokenTypeText, start, start+1)
+		return
+	} else if c == '(' || c == '{' {
 		start_is_paren := c == '(' // to differentiate between @(go code) and @{go code}
 		kind := TokenTypeCode      // {
 		until := '}'

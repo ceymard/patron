@@ -126,6 +126,9 @@ func GenerateGoCode(tokens []*Token, output io.Writer) int {
 				}
 			}
 
+		case TokenTypeStatement:
+			output.Write([]byte(indent + content + "\n"))
+
 		case TokenTypeString:
 			output.Write([]byte(indent + writer_var + ".Write([]byte(" + content + "))\n"))
 		}
