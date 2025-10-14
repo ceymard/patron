@@ -48,10 +48,11 @@ func main() {
 
 		GenerateGoCode(lexer.Tokens, outfile)
 		outfile.WriteString("\n\nfunc TestInclude" + strconv.Itoa(i) + "(t *testing.T) {\n")
-		outfile.WriteString("  var buf bytes.Buffer\n")
-		outfile.WriteString("  var st fmt.Stringer = &buf\n")
-		outfile.WriteString("  st.String()\n")
-		outfile.WriteString("}\n")
+		outfile.WriteString("  var buf bytes.Buffer\n" +
+			"  var st fmt.Stringer = &buf\n" +
+			"  var w io.Writer = &buf\n" +
+			"  _, _ = w.Write([]byte(st.String()))\n" +
+			"}\n")
 
 		log.Printf("Generated %s", outfile_path)
 	}

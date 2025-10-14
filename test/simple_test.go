@@ -188,5 +188,6 @@ func checkIndent3() string {
 func TestInclude0(t *testing.T) {
   var buf bytes.Buffer
   var st fmt.Stringer = &buf
-  st.String()
+  var w io.Writer = &buf
+  _, _ = w.Write([]byte(st.String()))
 }
